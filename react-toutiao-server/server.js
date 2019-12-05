@@ -44,11 +44,13 @@ var actionMap =[
     {
         uri: /^\/list\/?$/,
         handler: function(req, res) {
-            https.get('https://m.toutiao.com/list/?tag=__all__&ac=wap&count=20&format=json_raw&as=A1959DEE7705725&cp=5DE795A782050E1&min_behot_time=0&_signature=igshfwAA1.m8EJUOpzBzaYoLIW&i=', function(list) {
-                console.log('list::::', list);
+            // 发请求
+            https.get('https://m.toutiao.com/list/?tag=__all__&ac=wap&count=20&format=json_raw', function(list) {
+                // console.log('list::::', list);
                 let body = '';
                 list
                     .on('data', chunk => {
+                        // console.log('chunk:::', chunk.toString());
                         body += chunk;
                     })
                     .on('end', () => {
