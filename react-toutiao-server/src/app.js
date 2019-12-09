@@ -78,11 +78,12 @@ class Main extends Component {
     }
 
     getList() {
-        return Promise.resolve({
-            data: []
-        });
-        // return fetch('http://localhost:9000/list')
-        //     .then(res => res.json());
+        // return Promise.resolve({
+        //     data: []
+        // });
+        return fetch('http://localhost:9000/list')
+            .then(res => res.json())
+            .catch(err => console.error(err));
     }
 
     render() {
@@ -99,6 +100,9 @@ class Main extends Component {
                             renderItem = {item => {
                                 const type = item.type.replace(/^\w/, code => code.toUpperCase());
                                 const ItemComponent = components[type];
+                                if (!ItemComponent) {
+                                    return null;
+                                }
                                 return <ItemComponent
                                         onClick={this.skip.bind(this)}
                                         data={item.data}
@@ -121,7 +125,7 @@ class Main extends Component {
     // }
 
     updateList(dispatch) {
-        console.log('dispatch?????', dispatch);
+        // console.log('dispatch?????', dispatch);
         return this.getList()
             .then(({data}) => {
                 dispatch({

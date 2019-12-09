@@ -1,26 +1,75 @@
-/**
- * @file custom react-redux
- * @author jessie
-*/
-import React, {Component} from 'react';
+"use strict";
 
-const createContext = () => {
-    return React.createContext(null);
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.connect = exports.Provider = void 0;
+
+var _react = _interopRequireWildcard(require("react"));
+
+function _getRequireWildcardCache() { if (typeof WeakMap !== "function") return null; var cache = new WeakMap(); _getRequireWildcardCache = function _getRequireWildcardCache() { return cache; }; return cache; }
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } if (obj === null || _typeof(obj) !== "object" && typeof obj !== "function") { return { "default": obj }; } var cache = _getRequireWildcardCache(); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj["default"] = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
+
+function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function _extends() { _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
+
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(source, true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(source).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+var createContext = function createContext() {
+  return _react["default"].createContext(null);
 };
-const ReduxContext = createContext();
+
+var ReduxContext = createContext();
 /**
  * @class Provider外层组件，获取store
 */
-export class Provider extends Component {
 
-    render() {
-        console.log('this.props.children:::', this.props.children);
-        const store = this.props.store;
-        return <ReduxContext.Provider value={store}>
-            {this.props.children}
-        </ReduxContext.Provider>;
+var Provider =
+/*#__PURE__*/
+function (_Component) {
+  _inherits(Provider, _Component);
+
+  function Provider() {
+    _classCallCheck(this, Provider);
+
+    return _possibleConstructorReturn(this, _getPrototypeOf(Provider).apply(this, arguments));
+  }
+
+  _createClass(Provider, [{
+    key: "render",
+    value: function render() {
+      console.log('this.props.children:::', this.props.children);
+      var store = this.props.store;
+      return _react["default"].createElement(ReduxContext.Provider, {
+        value: store
+      }, this.props.children);
     }
-}
+  }]);
+
+  return Provider;
+}(_react.Component);
 /**
  * 连接器方法，接受映射方法，返回HOC
  * @param {Function} [mapStateToProps] - 映射store上的state到props
@@ -28,44 +77,72 @@ export class Provider extends Component {
  * @param {React.Component} [ConnectComponent] - 需要HOC装饰的组件
  * @return {React.Component} - 装饰后的方法
 */
-export const connect = (mapStateToProps, mapDispatchToProps) => {
-    return ConnectComponent => {
-        return class extends Component {
 
-            constructor(props) {
-                super(props);
-                this.state = {
-                    mergedProps: null
-                };
+
+exports.Provider = Provider;
+
+var connect = function connect(mapStateToProps, mapDispatchToProps) {
+  return function (ConnectComponent) {
+    var _class, _temp;
+
+    return _temp = _class =
+    /*#__PURE__*/
+    function (_Component2) {
+      _inherits(_class, _Component2);
+
+      function _class(props) {
+        var _this;
+
+        _classCallCheck(this, _class);
+
+        _this = _possibleConstructorReturn(this, _getPrototypeOf(_class).call(this, props));
+        _this.state = {
+          mergedProps: null
+        };
+        return _this;
+      }
+
+      _createClass(_class, [{
+        key: "componentDidMount",
+        value: function componentDidMount() {
+          var _this2 = this;
+
+          var store = this.context;
+          store.subscribe(function () {
+            // console.log('getState:::', store.getState());
+            var mergedProps = _this2.computeProps(store);
+
+            if (mergedProps !== _this2.state.mergedProps) {
+              _this2.setState({
+                mergedProps: mergedProps
+              });
             }
-
-            componentDidMount() {
-                const store = this.context;
-                store.subscribe(() => {
-                    // console.log('getState:::', store.getState());
-                    const mergedProps = this.computeProps(store);
-                    if(mergedProps !== this.state.mergedProps) {
-                        this.setState({mergedProps});
-                    }  
-                });
-            }
-
-            static contextType = ReduxContext;
-
-            computeProps(store) {
-                const stateProps = mapStateToProps(store.getState());
-                //用箭头函数将store.dispatch包装一下，防止dispatch丢this
-                //防止丢this的方式：1.箭头函数；2.bind一下；
-                const eventProps = mapDispatchToProps((...args) => store.dispatch(...args));
-                //把上面的两个props merge一下
-                return {...stateProps, ...eventProps};
-            }
-
-            render() {
-                console.log('i got:::', this.context);
-                const mergedProps = this.state.mergedProps || this.computeProps(this.context);
-                return (<ConnectComponent {...mergedProps} {...this.props}/>);
-            }
+          });
         }
-    }
+      }, {
+        key: "computeProps",
+        value: function computeProps(store) {
+          var stateProps = mapStateToProps(store.getState()); //用箭头函数将store.dispatch包装一下，防止dispatch丢this
+          //防止丢this的方式：1.箭头函数；2.bind一下；
+
+          var eventProps = mapDispatchToProps(function () {
+            return store.dispatch.apply(store, arguments);
+          }); //把上面的两个props merge一下
+
+          return _objectSpread({}, stateProps, {}, eventProps);
+        }
+      }, {
+        key: "render",
+        value: function render() {
+          console.log('i got:::', this.context);
+          var mergedProps = this.state.mergedProps || this.computeProps(this.context);
+          return _react["default"].createElement(ConnectComponent, _extends({}, mergedProps, this.props));
+        }
+      }]);
+
+      return _class;
+    }(_react.Component), _defineProperty(_class, "contextType", ReduxContext), _temp;
+  };
 };
+
+exports.connect = connect;

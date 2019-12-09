@@ -6,11 +6,22 @@ var React = require('react');
 // 将jsx转换成html字符串
 const { renderToString } = require('react-dom/server');
 const { StaticRouter } = require('react-router-dom');
-const hook = require('css-module-require-hook/preset');
-const App = require('../src/app').default;
+const hook = require('css-modules-require-hook/preset');
+const App = require('../src-es5/app').default;
+const store = require('../src-es5/store').default;
 const {Provider, connect} = require('react-redux');
-const store = require('../store').default;
 var fs = require('fs');
+
+function mockBrowserApis() {
+    var apis = {
+        fetch: () => Promise.reject()
+    };
+    for(var name in apis) {
+        global[name] = apis[name];
+    }
+}
+
+mockBrowserApis();
 
 function renderSSR() {
     const htmlStr = renderToString(
@@ -36,7 +47,6 @@ function renderSSR() {
 // 渲染函数
 function readContent(ROOT_DIR, path) {
     return new Promise(function(resolve, reject) {
-        renderSSR();
         fs.readFile(ROOT_DIR + path, 'utf-8', function(err, content) {
             if(err) {
                 reject(err);
@@ -48,25 +58,34 @@ function readContent(ROOT_DIR, path) {
 
 const convert = function convert(listStr) {
     var bodyObj = JSON.parse(listStr);
-    return JSON.stringify({
-        data: [
-            {
-                "type": "singlePic",
-                "data": {
-                    "articleUrl": bodyObj.data[0].article_url,
-                    "title": bodyObj.data[0].title,
-                    "id": "i6727851773362438664",
-                    "articleType": "video",
-                    "imageList": [
-                        bodyObj.data[0].image_url
-                    ]
+    var convertedObj = {
+        data: bodyObj.data.map(item => {
+                let type = 'default';
+                let imageList = [];
+                if (item.image_list.length >= 3) {
+                    type = 'multiplePic';
+                    imageList = item.image_list;
+                } else if (item.image_url) {
+                    type = 'singlePic';
+                    imageList = [image_url];
                 }
-            }
-        ]
-    });
+                return  {
+                    "type": type,
+                    "data": {
+                        "articleUrl": item.article_url,
+                        "title": item.title,
+                        "id": "i6727851773362438664",
+                        "articleType": "video",
+                        "imageList": imageList
+                    }
+                }
+            })
+    }
+    return convertedObj;
 }
 
 module.exports = {
     readContent: readContent,
+    renderSSR: renderSSR,
     convert: convert
 };

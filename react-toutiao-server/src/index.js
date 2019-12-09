@@ -9,10 +9,14 @@ import store from './store';
 import AppContainer from './app';
 import {Provider, connect} from 'react-redux';
 
-ReactDOM.render(<BrowserRouter>
-        <Provider store={store}>
-            <AppContainer />
-        </Provider>
-    </BrowserRouter>,
-    document.getElementById('app')
-);
+setTimeout(() => {
+    ReactDOM.render(<BrowserRouter>
+            <Provider store={store}>
+                <AppContainer />
+            </Provider>
+        </BrowserRouter>,
+        document.getElementById('app')
+    );
+}, 5000);
+
+

@@ -2,10 +2,10 @@ var http = require('http');
 var utils = require('./utils');
 var apis = require('./apis');
 
-var TEMPLATE_ROOT_DIR = '/Users/qb/nodejs-pro/react-toutiao-server/dist/html/';
-// var TEMPLATE_ROOT_DIR = 'D:/myProject/nodejs-pro/react-toutiao-server/dist/html/';
-// var STATIC_DIR = 'D:/myProject/nodejs-pro/react-toutiao-server/dist/static/';
-var STATIC_DIR = '/Users/qb/nodejs-pro/react-toutiao-server/dist/static/';
+// var TEMPLATE_ROOT_DIR = '/Users/qb/nodejs-pro/react-toutiao-server/dist/html/';
+var TEMPLATE_ROOT_DIR = 'D:/myProject/nodejs-pro/react-toutiao-server/dist/html/';
+var STATIC_DIR = 'D:/myProject/nodejs-pro/react-toutiao-server/dist/static/';
+// var STATIC_DIR = '/Users/qb/nodejs-pro/react-toutiao-server/dist/static/';
 
 var actionMap =[
     {
@@ -14,6 +14,8 @@ var actionMap =[
             // 获取并渲染了html字符串
             utils.readContent(TEMPLATE_ROOT_DIR, 'index.html')
                 .then(content => {
+                    const reactTpl = utils.renderSSR();
+                    content = content.replace('{%content%}', reactTpl);
                     res.write(content);
                     res.end();
                 });
@@ -35,8 +37,8 @@ var actionMap =[
         uri: /^\/list\/?$/,
         handler: function(req, res) {
             apis.getList().then(content => {
-                const listStr = utils.convert(content);
-                res.write(listStr);
+                const listObj = utils.convert(content);
+                res.write(JSON.stringify(listObj));
                 res.end();
             });
         }
