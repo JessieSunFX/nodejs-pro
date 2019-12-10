@@ -127,8 +127,6 @@ function (_Component) {
       // });
       return fetch('http://localhost:9000/list').then(function (res) {
         return res.json();
-      })["catch"](function (err) {
-        return console.error(err);
       });
     }
   }, {
@@ -183,6 +181,8 @@ function (_Component) {
           type: 'PUSH_LIST',
           data: data
         });
+      })["catch"](function (err) {
+        return console.error(err);
       });
     }
   }, {
@@ -206,8 +206,10 @@ function (_Component) {
       //         this.props.listUpdate(data);
       //     });
       // this.props.listUpdate(this.updateList());
-
-      this.props.listUpdate(this.updateList.bind(this)); //     window.onscroll = () => {
+      // setTimeout(() => {
+      //     this.props.listUpdate(this.updateList.bind(this));
+      // }, 2000);
+      //     window.onscroll = () => {
       //         // this.updateList()
       //         //     .then(data => {
       //         //         // store.dispatch({

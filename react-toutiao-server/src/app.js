@@ -82,8 +82,7 @@ class Main extends Component {
         //     data: []
         // });
         return fetch('http://localhost:9000/list')
-            .then(res => res.json())
-            .catch(err => console.error(err));
+            .then(res => res.json());
     }
 
     render() {
@@ -132,7 +131,8 @@ class Main extends Component {
                     type: 'PUSH_LIST',
                     data
                 });
-            });
+            })
+            .catch(err => console.error(err));
     }
 
     reactiveList() {
@@ -156,7 +156,9 @@ class Main extends Component {
         //         this.props.listUpdate(data);
         //     });
         // this.props.listUpdate(this.updateList());
-        this.props.listUpdate(this.updateList.bind(this));
+        // setTimeout(() => {
+        //     this.props.listUpdate(this.updateList.bind(this));
+        // }, 2000);
     //     window.onscroll = () => {
     //         // this.updateList()
     //         //     .then(data => {

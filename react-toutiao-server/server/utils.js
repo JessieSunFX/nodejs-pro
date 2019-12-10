@@ -8,7 +8,7 @@ const { renderToString } = require('react-dom/server');
 const { StaticRouter } = require('react-router-dom');
 const hook = require('css-modules-require-hook/preset');
 const App = require('../src-es5/app').default;
-const store = require('../src-es5/store').default;
+const createStore = require('../src-es5/store').default;
 const {Provider, connect} = require('react-redux');
 var fs = require('fs');
 
@@ -23,7 +23,7 @@ function mockBrowserApis() {
 
 mockBrowserApis();
 
-function renderSSR() {
+function renderSSR(storeData) {
     const htmlStr = renderToString(
         React.createElement(
             StaticRouter,
@@ -34,14 +34,29 @@ function renderSSR() {
             React.createElement(
                 Provider,
                 {
-                    store: store
+                    store: createStore(storeData)
                 },
                 React.createElement(App)
             )
         )
     );
-    console.log('htmlStr::::', htmlStr);
+    // console.log('htmlStr::::', htmlStr);
     return htmlStr;
+}
+
+function createCacher(maxSize) {
+    var cacheMap = {};
+    var usedSize = 0;
+    return function(key, value) {
+        if(!value) {
+            return cacheMap[key];
+        }
+        const contentSize = value.length;//TODO 按字节特判
+        if (usedSize + contentSize < maxSize) {
+            cacheMap[key] = value;
+            usedSize += contentSize;
+        }
+    }
 }
 
 // 渲染函数
@@ -64,10 +79,10 @@ const convert = function convert(listStr) {
                 let imageList = [];
                 if (item.image_list.length >= 3) {
                     type = 'multiplePic';
-                    imageList = item.image_list;
+                    imageList = item.image_list.map(image => image.url);
                 } else if (item.image_url) {
                     type = 'singlePic';
-                    imageList = [image_url];
+                    imageList = [item.image_url];
                 }
                 return  {
                     "type": type,
@@ -87,5 +102,6 @@ const convert = function convert(listStr) {
 module.exports = {
     readContent: readContent,
     renderSSR: renderSSR,
-    convert: convert
+    convert: convert,
+    createCacher: createCacher
 };

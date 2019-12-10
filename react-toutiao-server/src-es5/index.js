@@ -25,7 +25,9 @@ function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj;
  * @author jessie
  */
 setTimeout(function () {
-  _reactDom["default"].render(_react["default"].createElement(_reactRouterDom.BrowserRouter, null, _react["default"].createElement(_reactRedux.Provider, {
-    store: _store["default"]
+  var store = (0, _store["default"])(window.initListData);
+
+  _reactDom["default"].hydrate(_react["default"].createElement(_reactRouterDom.BrowserRouter, null, _react["default"].createElement(_reactRedux.Provider, {
+    store: store
   }, _react["default"].createElement(_app["default"], null))), document.getElementById('app'));
 }, 5000);

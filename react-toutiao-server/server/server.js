@@ -7,17 +7,42 @@ var TEMPLATE_ROOT_DIR = 'D:/myProject/nodejs-pro/react-toutiao-server/dist/html/
 var STATIC_DIR = 'D:/myProject/nodejs-pro/react-toutiao-server/dist/static/';
 // var STATIC_DIR = '/Users/qb/nodejs-pro/react-toutiao-server/dist/static/';
 
+//var count = 0;//线程是隔离上下文运行环境的
+
+var cache = utils.createCacher(5 * 1000 * 1000);//5M内存
+
 var actionMap =[
     {
         uri: /^\/home/,
         handler: function(req, res) {
+
+            // const cacheStr = cache(TEMPLATE_ROOT_DIR + 'index.html');
+            // if (cacheStr) {
+            //     console.log('use cache!!!');
+            //     res.write(cacheStr);
+            //     res.end();
+            //     return;
+            // }
+
             // 获取并渲染了html字符串
             utils.readContent(TEMPLATE_ROOT_DIR, 'index.html')
                 .then(content => {
-                    const reactTpl = utils.renderSSR();
-                    content = content.replace('{%content%}', reactTpl);
-                    res.write(content);
-                    res.end();
+                    apis.getList().then(listStr => {
+                        const listObj = utils.convert(listStr);
+                        const reactTpl = utils.renderSSR({
+                            list: listObj.data
+                        });
+                        // console.log('count:::', count++);
+                        content = content
+                            // .replace('{%content%}', '<div>你是第' + count + '个访问的</div>' + reactTpl)
+                            .replace('{%content%}', reactTpl)
+                            .replace('{%listData%}', JSON.stringify({
+                                list: listObj.data
+                            }));
+                        cache(TEMPLATE_ROOT_DIR + 'index.html', content);
+                        res.write(content);
+                        res.end();
+                    });
                 });
         }
     },
@@ -44,6 +69,8 @@ var actionMap =[
         }
     }
 ]; 
+
+// console.log('process:::', process.memoryUsage());
 
 var server = http.createServer((req, res) => {
     // 收到请求 RPC

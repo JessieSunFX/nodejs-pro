@@ -17,11 +17,7 @@ function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { va
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
-var toutiaoProcessor = function toutiaoProcessor() {
-  var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {
-    list: []
-  };
-  var action = arguments.length > 1 ? arguments[1] : undefined;
+var toutiaoProcessor = function toutiaoProcessor(state, action) {
   console.log('i got an dispatch:::', action);
 
   if (action.type === 'PUSH_LIST') {
@@ -48,9 +44,16 @@ var reduxPromise = function reduxPromise(_ref) {
       return next(action);
     };
   };
+}; // 如果想解决全局变量，最好的方式就是依赖注入；你依赖的东西通过某种形式注进来，被人给你，而不是你自己从全局上拿；
+
+
+var _default = function _default() {
+  var initState = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {
+    list: []
+  };
+  return (0, _redux.createStore)(toutiaoProcessor, initState, (0, _redux.applyMiddleware)(_reduxThunk["default"]));
 }; // const store = createStore(toutiaoProcessor, applyMiddleware(reduxPromise));
+// export default store;
 
 
-var store = (0, _redux.createStore)(toutiaoProcessor, (0, _redux.applyMiddleware)(_reduxThunk["default"]));
-var _default = store;
 exports["default"] = _default;
