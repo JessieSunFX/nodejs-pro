@@ -99,6 +99,28 @@ const convert = function convert(listStr) {
     return convertedObj;
 }
 
+// 集中、同步发请求
+function testing(number) {
+    let tasks = [];
+    for(var i = 0; i < number; i++) {
+        let start = performance.now();
+        tasks.push(fetch('http://192.168.31.196:9000/home')  //用localhost请求不行
+            .then(() => {
+                let end = performance.now();
+                return end - start;
+            }));
+    }
+    return Promise.all(tasks);
+}
+
+function init() {
+    var allStart = performance.now();
+    testing(10).then(() => {
+        var allEnd = performance.now();
+        console.log('allTimes:::', allEnd - allStart);
+    });
+}
+
 module.exports = {
     readContent: readContent,
     renderSSR: renderSSR,

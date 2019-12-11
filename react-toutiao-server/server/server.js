@@ -9,6 +9,14 @@ var STATIC_DIR = 'D:/myProject/nodejs-pro/react-toutiao-server/dist/static/';
 
 //var count = 0;//线程是隔离上下文运行环境的
 
+function fab(num) {
+    var sum = 0;
+    for(var i = 0; i < num; i++) {
+        sum *= i;
+    }
+    return sum;
+}
+
 var cache = utils.createCacher(5 * 1000 * 1000);//5M内存
 
 var actionMap =[
@@ -16,8 +24,10 @@ var actionMap =[
         uri: /^\/home/,
         handler: function(req, res) {
 
-            // const cacheStr = cache(TEMPLATE_ROOT_DIR + 'index.html');
-            // if (cacheStr) {
+            fab(1000000);
+
+            const cacheStr = cache(TEMPLATE_ROOT_DIR + 'index.html');
+            // if (cacheStr) {//这种缓存适用于每个用户看到的是一样的内容
             //     console.log('use cache!!!');
             //     res.write(cacheStr);
             //     res.end();
@@ -27,22 +37,36 @@ var actionMap =[
             // 获取并渲染了html字符串
             utils.readContent(TEMPLATE_ROOT_DIR, 'index.html')
                 .then(content => {
-                    apis.getList().then(listStr => {
-                        const listObj = utils.convert(listStr);
-                        const reactTpl = utils.renderSSR({
-                            list: listObj.data
-                        });
-                        // console.log('count:::', count++);
-                        content = content
-                            // .replace('{%content%}', '<div>你是第' + count + '个访问的</div>' + reactTpl)
-                            .replace('{%content%}', reactTpl)
-                            .replace('{%listData%}', JSON.stringify({
+                    if (false) {//做一个检测机器的脚本或者手动开关
+                        apis.getList().then(listStr => {
+                            const listObj = utils.convert(listStr);
+                            const reactTpl = utils.renderSSR({
                                 list: listObj.data
-                            }));
-                        cache(TEMPLATE_ROOT_DIR + 'index.html', content);
-                        res.write(content);
-                        res.end();
-                    });
+                            });
+                            // console.log('count:::', count++);
+                            content = content
+                                // .replace('{%content%}', '<div>你是第' + count + '个访问的</div>' + reactTpl)
+                                .replace('{%content%}', reactTpl)
+                                .replace('{%listData%}', JSON.stringify({
+                                    list: listObj.data
+                                }));
+                            cache(TEMPLATE_ROOT_DIR + 'index.html', content);
+                            res.write(content);
+                            res.end();
+                        });
+                    } else {//退化成前端渲染
+                        apis.getList().then(listStr => {
+                            const listObj = utils.convert(listStr);
+                            content = content
+                                .replace('{%content%}', '')
+                                .replace('{%listData%}', JSON.stringify({
+                                    list: listObj.data
+                                }));
+                            cache(TEMPLATE_ROOT_DIR + 'index.html', content);
+                            res.write(content);
+                            res.end();
+                        });
+                    }
                 });
         }
     },
@@ -72,14 +96,18 @@ var actionMap =[
 
 // console.log('process:::', process.memoryUsage());
 
-var server = http.createServer((req, res) => {
-    // 收到请求 RPC
-    // console.log('req有访问的path么????----', req.url);
-    const actions = actionMap.filter(({uri}) => uri.exec(req.url));
-    actions.forEach(action => action.handler(req, res));
-    // console.log('actions actions actions::', actions);
-    // res.write('<div>jessie come on</div>');
-    // res.end();
-});
+function init() {
+    var server = http.createServer((req, res) => {
+        // 收到请求 RPC
+        // console.log('req有访问的path么????----', req.url);
+        const actions = actionMap.filter(({uri}) => uri.exec(req.url));
+        actions.forEach(action => action.handler(req, res));
+        // console.log('actions actions actions::', actions);
+        // res.write('<div>jessie come on</div>');
+        // res.end();
+    });
+    
+    server.listen(9000);
+}
 
-server.listen(9000);
+module.exports.init = init;
