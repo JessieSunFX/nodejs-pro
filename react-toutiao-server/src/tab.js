@@ -27,6 +27,7 @@ export default class Tab extends Component{
             }
             {/* <span onClick={this.onShowMore.bind(this)}>+</span> */}
             <Link to="/home/setting">+</Link>
+            <Link to="/login">登录</Link>
             <Route path="/home/setting" render={props => {
                 return <Suspense fallback={<div>Loading...</div>}>
                         <SettingComponent />

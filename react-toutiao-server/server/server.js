@@ -21,7 +21,7 @@ var cache = utils.createCacher(5 * 1000 * 1000);//5M内存
 
 var actionMap =[
     {
-        uri: /^\/home/,
+        uri: /^\/(home|login)/,
         handler: function(req, res) {
 
             fab(1000000);
@@ -68,6 +68,32 @@ var actionMap =[
                         });
                     }
                 });
+        }
+    },
+    {
+        uri: /^\/data\/login\/?$/,
+        handler: function(req, res) {
+
+            const getRawBody = req => new Promise(resolve => {
+                var body = '';
+                req.on('data', function (chunk) {
+                    body += chunk;
+                });
+                req.on('end', function () {
+                    console.log('body::::', body);
+                    resolve(JSON.parse(body));
+                });
+            });
+
+            getRawBody(req)
+            .then(bodyObj => {
+                const {username, password} = bodyObj;
+                res.setHeader('Set-Cookie', 'username=' + username + ';');
+                res.write(JSON.stringify({
+                    errcode: 0
+                }));
+                res.end();
+            });
         }
     },
     {

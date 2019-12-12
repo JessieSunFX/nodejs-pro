@@ -9,7 +9,7 @@ import createStore from './store';
 import AppContainer from './app';
 import {Provider, connect} from 'react-redux';
 
-setTimeout(() => {
+// setTimeout(() => {
     const store = createStore(window.initListData);
     ReactDOM.hydrate(<BrowserRouter>
             <Provider store={store}>
@@ -18,6 +18,6 @@ setTimeout(() => {
         </BrowserRouter>,
         document.getElementById('app')
     );
-}, 5000);
+// }, 5000);
 
 

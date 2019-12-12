@@ -9,6 +9,7 @@ import {Provider, connect} from 'react-redux';
 import {BrowserRouter, Route, Link, Switch} from 'react-router-dom';
 // import {Router} from 'react-router';
 import Detail from './detail';
+import Login from './login';
 
 // class Lazy extends Component{
 //     render() {
@@ -159,18 +160,20 @@ class Main extends Component {
         // setTimeout(() => {
         //     this.props.listUpdate(this.updateList.bind(this));
         // }, 2000);
-    //     window.onscroll = () => {
-    //         // this.updateList()
-    //         //     .then(data => {
-    //         //         // store.dispatch({
-    //         //         //     type: 'PUSH_LIST',
-    //         //         //     data
-    //         //         // });
-    //         //         this.props.listUpdate(data);
-    //         //     });
-    //         // this.props.listUpdate(this.updateList());
-    //         this.props.listUpdate(this.updateList.bind(this));
-    //    };
+        if(window) {
+            window.onscroll = () => {
+                // this.updateList()
+                //     .then(data => {
+                //         // store.dispatch({
+                //         //     type: 'PUSH_LIST',
+                //         //     data
+                //         // });
+                //         this.props.listUpdate(data);
+                //     });
+                // this.props.listUpdate(this.updateList());
+                this.props.listUpdate(this.updateList.bind(this));
+           };
+        }
     }
 
     skip() {
@@ -217,6 +220,7 @@ export default () => {
         <Switch>
             <Route path="/home" component={App} />
             <Route path="/detail/:id" component={Detail} />
+            <Route path="/login" component={Login} />
             <Route component={TopBar} />
         </Switch>);
 }
