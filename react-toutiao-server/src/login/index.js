@@ -45,7 +45,7 @@ export default class extends Component {
         .then(res => res.json())
         .then(res => {
             if(+res.errcode === 0) {
-                history.back();
+                window.location.href = '/home';
                 console.log('登录结果：', res);
             }
         })

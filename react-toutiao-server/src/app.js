@@ -216,7 +216,7 @@ export default () => {
     const TopBar = () => {
         return <div>我是404</div>;
     }
-    return (
+    return (    
         <Switch>
             <Route path="/home" component={App} />
             <Route path="/detail/:id" component={Detail} />
