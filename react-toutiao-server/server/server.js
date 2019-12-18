@@ -17,8 +17,12 @@ var STATIC_DIR = 'D:/myProject/nodejs-pro/react-toutiao-server/dist/static/';
 //     return sum;
 // }
 
+/*
 let uid = 0;
-// session的本质还是内存存储，存在服务端的一块变量，客户端直接改不了，都是通过指令去影响它
+// session的本质还是内存存储，存在服务端的一块变量，客户端直接改不了，都是通过指令去影响它；可以在一次页面的多次请求之间共享一块内存信息；
+// session问题：
+// 1.服务器重启后就没了，即使cookie中有，但是服务端的内存变量已经没了，取不出来了；
+// 2.内存同步问题，session同步；比如使用cluster，启好多进程，这些进程之间的内存是不共享的；
 const createSession = id => {
     let sessionObj = {};
 
@@ -33,7 +37,9 @@ const createSession = id => {
     }
 };
 
+
 var session = createSession();
+*/
 var cache = utils.createCacher(5 * 1000 * 1000);//5M内存
 
 var actionMap =[
@@ -74,14 +80,16 @@ var actionMap =[
                     } else {//退化成前端渲染
                         apis.getList().then(listStr => {
                             const listObj = utils.convert(listStr);
+                            /*
                             let userInfos = session.get([req.cookies['uid']]) || {};
                             console.log('userInfos::::', userInfos, req.cookies['uid']);
+                            */
                             content = content
                                 .replace('{%content%}', '')
                                 .replace('{%listData%}', JSON.stringify({
                                     list: listObj.data
-                                }))
-                                .replace('{%username%}', userInfos.username);
+                                }));
+                                // .replace('{%username%}', userInfos.username);
                             cache(TEMPLATE_ROOT_DIR + 'index.html', content);
                             res.write(content);
                             res.end();
@@ -108,11 +116,14 @@ var actionMap =[
             getRawBody(req)
             .then(bodyObj => {
                 const {username, password} = bodyObj;
-                session.set(++uid, {
+                /*
+                session.set(uid, {
                     username,
                     password
                 });
                 res.setHeader('Set-Cookie', 'uid=' + uid + ';path=/');
+                */
+                uid++;
                 res.write(JSON.stringify({
                     errcode: 0
                 }));
@@ -150,7 +161,7 @@ const parseCookie = req => {
     let cookieInfo = null;
     const cookies = {};
     while(cookieInfo = cookieRegx.exec(cookieStr)) {//非等号或空格若干 = 非分号若干 后面跟上；或者结束
-        console.log('cookieInfo:::', cookieInfo);
+        // console.log('cookieInfo:::', cookieInfo);
         cookies[cookieInfo[1]] = cookieInfo[2];
     }
     return cookies;
