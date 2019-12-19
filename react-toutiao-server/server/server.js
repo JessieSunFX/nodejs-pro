@@ -1,6 +1,7 @@
 var http = require('http');
 var utils = require('./utils');
 var apis = require('./apis');
+var User = require('./model/user');
 
 // var TEMPLATE_ROOT_DIR = '/Users/qb/nodejs-pro/react-toutiao-server/dist/html/';
 var TEMPLATE_ROOT_DIR = 'D:/myProject/nodejs-pro/react-toutiao-server/dist/html/';
@@ -122,12 +123,32 @@ var actionMap =[
                     password
                 });
                 res.setHeader('Set-Cookie', 'uid=' + uid + ';path=/');
-                */
                 uid++;
-                res.write(JSON.stringify({
-                    errcode: 0
-                }));
-                res.end();
+                */
+                return User.getInstance({
+                    username,
+                    password
+                })
+                .check()
+                .then(userInfo => {
+                    console.log('登录成功，找到用户');
+                    res.write(JSON.stringify({
+                        errcode: 0
+                    }));
+                    res.end();
+                })
+                .catch(err => {
+                    console.log('登录失败，没找到用户');
+                    res.write(JSON.stringify({
+                        errcode: -1,
+                        errmessage: '登录失败'
+                    }));
+                    res.end();
+                });
+                // res.write(JSON.stringify({
+                //     errcode: 0
+                // }));
+                // res.end();
             });
         }
     },
@@ -172,15 +193,21 @@ const checkLogin = req => {
     console.log('parseCookie::', cookies);
     req.cookies = cookies;
     const whileList = [/^\/static/, /\/login/];
+    if (whileList.some(regx => regx.exec(req.url))) {
+        return Promise.resolve();
+    }
+    return User.getInstance({
+            id: +req.cookies['uid']
+        }).check();
     
-    return new Promise((resolve, reject) => {
-        if (!req.cookies['uid'] 
-            && !whileList.some(regx => regx.exec(req.url))
-        ) {
-            reject();
-        }
-        resolve();
-    });
+    // return new Promise((resolve, reject) => {
+    //     if (!req.cookies['uid'] 
+    //         && !whileList.some(regx => regx.exec(req.url))
+    //     ) {
+    //         reject();
+    //     }
+    //     resolve();
+    // });
     
 };
 
@@ -193,11 +220,13 @@ function init() {
         // console.log('req有访问的path么????----', req.url);
         checkLogin(req)
             .then(() => {
+                console.log('查询到了');
                 console.log('uid::::', req.cookies['uid']);
                 const actions = actionMap.filter(({uri}) => uri.exec(req.url));
                 actions.forEach(action => action.handler(req, res));
             })
             .catch(() => {
+                console.log('没查询到');
                 res.writeHead(302, {
                     'Location': '/login'
                 });
