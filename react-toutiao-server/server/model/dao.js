@@ -18,7 +18,7 @@ var mysql = require('mysql');
 //     },500);
 // });
 
-module.exports = class {
+module.exports = class Dao{
 
     constructor() {
         this.ensureConnection();

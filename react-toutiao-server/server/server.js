@@ -3,10 +3,10 @@ var utils = require('./utils');
 var apis = require('./apis');
 var User = require('./model/user');
 
-// var TEMPLATE_ROOT_DIR = '/Users/qb/nodejs-pro/react-toutiao-server/dist/html/';
-var TEMPLATE_ROOT_DIR = 'D:/myProject/nodejs-pro/react-toutiao-server/dist/html/';
-var STATIC_DIR = 'D:/myProject/nodejs-pro/react-toutiao-server/dist/static/';
-// var STATIC_DIR = '/Users/qb/nodejs-pro/react-toutiao-server/dist/static/';
+var TEMPLATE_ROOT_DIR = '/Users/qb/nodejs-pro/react-toutiao-server/dist/html/';
+// var TEMPLATE_ROOT_DIR = 'D:/myProject/nodejs-pro/react-toutiao-server/dist/html/';
+// var STATIC_DIR = 'D:/myProject/nodejs-pro/react-toutiao-server/dist/static/';
+var STATIC_DIR = '/Users/qb/nodejs-pro/react-toutiao-server/dist/static/';
 
 //var count = 0;//线程是隔离上下文运行环境的
 

@@ -82,7 +82,7 @@ class Main extends Component {
         // return Promise.resolve({
         //     data: []
         // });
-        return fetch('http://localhost:9000/list')
+        return fetch('/list')
             .then(res => res.json());
     }
 
@@ -171,7 +171,11 @@ class Main extends Component {
                 //         this.props.listUpdate(data);
                 //     });
                 // this.props.listUpdate(this.updateList());
-                this.props.listUpdate(this.updateList.bind(this));
+
+                const TREATH_HOLD = 100;
+                if (document.body.clientHeight - (window.scrollY + document.documentElement.clientHeight) < TREATH_HOLD) {
+                    this.props.listUpdate(this.updateList.bind(this));
+                }
            };
         }
     }
