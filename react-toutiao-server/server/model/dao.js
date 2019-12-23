@@ -4,6 +4,20 @@
  */
 var mysql = require('mysql');
 
+// for(10000) {
+//     eventEmiter.fire('select * from User;');
+// }
+
+
+// eventEmiter.listen(() => {
+//     // 128个一组执行 10000/128,把瞬时压力打散成n次压力,不会压着mysql,没有提高db的连接数
+//     // 此处会被并发瞬间执行10000次
+    
+//     setTimeout(() => {
+//         db.query().then(fire);//提高db的并发
+//     },500);
+// });
+
 module.exports = class {
 
     constructor() {
@@ -12,6 +26,7 @@ module.exports = class {
 
     ensureConnection() {
         if(!this.pool) {
+        
             this.pool = mysql.createPool({//创建一个连接池，推荐
                 host: '127.0.0.1',
                 user: 'root',
