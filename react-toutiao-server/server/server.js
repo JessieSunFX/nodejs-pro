@@ -132,6 +132,7 @@ var actionMap =[
                 .check()
                 .then(userInfo => {
                     console.log('登录成功，找到用户');
+                    res.setHeader('Set-Cookie', `userid=${userInfo.id}`);
                     res.write(JSON.stringify({
                         errcode: 0
                     }));
