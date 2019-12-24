@@ -39,6 +39,9 @@ export default class extends Component {
         console.log('username and password:', this.form);
         fetch('/data/login', {
             method: 'POST',
+            headers: {
+                'Content-Type': 'application/json;charset=UTF-8' 
+            },
             credentials: 'same-origin',
             body: JSON.stringify(this.form)
         })

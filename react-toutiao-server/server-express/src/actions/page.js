@@ -9,7 +9,7 @@ const utils = require('../utils');
 module.exports = class {
 
     model(modelName) {
-        const ModelClass = require('../' + modelName.toLowerCase());
+        const ModelClass = require('../model/' + modelName.toLowerCase());
     }
 
     renderListPage(req, res) {

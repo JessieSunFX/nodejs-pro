@@ -20,7 +20,8 @@ module.exports = class extends Page {
 
    login(app) {
         app.post('/data/login', (req, res) => {
-            const {username, password} = bodyObj;
+            console.log('bodyParser:::', req.body);
+            const {username, password} = req.body;
             const User = this.model('User');
             User.getInstance({
                 username,

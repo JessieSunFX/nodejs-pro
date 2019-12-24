@@ -7,6 +7,7 @@ const express = require('express');
 const ejs = require('ejs');
 const config = require('./config');
 const Actions = require('./actions');
+const bodyParser = require('body-parser');
 /**
  * 1. 处理同步请求，并且渲染模板
  * 2. 处理JSON, 并最后返回JSON串 
@@ -22,6 +23,7 @@ function init() {
 
     // app.engine('html', ejs.__express);//express提供了engine方法，可以去注入模板引擎；
     // 只要是符合express规范的模板引擎都可以使用；
+    app.use(bodyParser.json());
     app.set('view engine', 'ejs');
     app.set('views', config.view.path);
     app.use('/static', express.static(config.view.staticPath));
