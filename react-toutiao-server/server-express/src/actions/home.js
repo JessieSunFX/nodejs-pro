@@ -15,8 +15,6 @@
 
     init(app) {
         app.get('/home', (req, res) => {
-            console.log('i get home!!!');
-            // res.send('i get home!!!!');
             this.render(req, res);
         });
     }

@@ -24,6 +24,18 @@ function init() {
     // app.engine('html', ejs.__express);//express提供了engine方法，可以去注入模板引擎；
     // 只要是符合express规范的模板引擎都可以使用；
     app.use(bodyParser.json());
+    app.use((req, res, next) => {
+        const cookieStr = req.headers.cookie || '';
+        const cookieRegx = /([^\=\s]*)=([^\;]*)(;|$)/g;
+        let cookieInfo = null;
+        const cookies = {};
+        while(cookieInfo = cookieRegx.exec(cookieStr)) {//非等号或空格若干 = 非分号若干 后面跟上；或者结束
+            // console.log('cookieInfo:::', cookieInfo);
+            cookies[cookieInfo[1]] = cookieInfo[2];
+        }
+        req.cookies = cookies;
+        next();
+    });
     app.set('view engine', 'ejs');
     app.set('views', config.view.path);
     app.use('/static', express.static(config.view.staticPath));

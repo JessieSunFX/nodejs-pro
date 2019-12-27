@@ -2,7 +2,8 @@
  * @file DAO
  * @author jessie
  */
-var mysql = require('mysql');
+const mysql = require('mysql');
+const redis = require('redis');
 
 // for(10000) {
 //     eventEmiter.fire('select * from User;');
@@ -55,6 +56,49 @@ module.exports = class Dao{
         //     });
         // }
         // return this.connection;
+    }
+
+    ensureCacher() {
+        if (!this.cacherTask) {
+            this.cacherTask = new Promise((resolve, reject) => {
+                var cacheClient = redis.createClient('6379', '127.0.0.1');
+                cacheClient.on('ready', function() {
+                    resolve(cacheClient);
+                });
+            });            
+        }
+        return this.cacherTask;
+    }
+
+    getCacher() {
+        return {
+            set: (key, value) => {
+                return this.ensureCacher()
+                    .then(cacheClient => {
+                        return new Promise((resolve, reject) => {
+                            cacheClient.set(key, value, (err, res) => {
+                                if (err) {
+                                    reject(err);
+                                }
+                                resolve(res);
+                            });
+                        });
+                    });
+            },
+            get: key => {
+                return this.ensureCacher()
+                    .then(cacheClient => {
+                        return new Promise((resolve, reject) => {
+                            cacheClient.get(key, (err, res) => {
+                                if (err) {
+                                    reject(err);
+                                }
+                                resolve(res);
+                            });
+                        });
+                    });
+            }
+        };
     }
 
     query(sql) {

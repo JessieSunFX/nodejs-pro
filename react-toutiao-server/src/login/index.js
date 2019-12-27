@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import {Provider, connect} from 'react-redux';
 import {BrowserRouter, Route, Link, withRouter} from 'react-router-dom';
 import { resolve } from 'path';
+import axios from 'axios';
 
 export default class extends Component {
 
@@ -37,21 +38,33 @@ export default class extends Component {
     login(event) {
         // 发请求到服务端开始登录
         console.log('username and password:', this.form);
-        fetch('/data/login', {
-            method: 'POST',
+        axois.post('/data/login', JSON.stringify(this.form), {
             headers: {
                 'Content-Type': 'application/json;charset=UTF-8' 
-            },
-            credentials: 'same-origin',
-            body: JSON.stringify(this.form)
+            }
         })
-        .then(res => res.json())
         .then(res => {
+            console.log('res::', res);
             if(+res.errcode === 0) {
                 window.location.href = '/home';
                 console.log('登录结果：', res);
             }
-        })
+        });
+        // fetch('/data/login', {
+        //     method: 'POST',
+        //     headers: {
+        //         'Content-Type': 'application/json;charset=UTF-8'
+        //     },
+        //     credentials: 'same-origin',
+        //     body: JSON.stringify(this.form)
+        // })
+        // .then(res => res.json())
+        // .then(res => {
+        //     if(+res.errcode === 0) {
+        //         window.location.href = '/home';
+        //         console.log('登录结果：', res);
+        //     }
+        // })
         event.preventDefault();
     }
 
